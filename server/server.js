@@ -10,7 +10,11 @@ import { connecToMongoDB } from "./db/connectionToMongoDB.js"
 
 const app = express()
 const PORT = process.env.PORT || 5000
-app.use(cors())
+app.use(cors({
+  origin: 'http://localhost:5173', // ודא שזה תואם לפורט של ה-Frontend שלך
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true // נחוץ אם אתה שולח עוגיות או Authorization headers
+}))
 app.use(express.json())
 app.use(cookieParser())
 
