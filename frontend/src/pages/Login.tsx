@@ -3,7 +3,7 @@ import { useAuthStore } from "../store/auth.store"
 import { useState } from "react"
 
 function Login() {
-  const { user, isLoading, login, success } = useAuthStore()
+  const { user , isLoading, login, success } = useAuthStore()
   const [formData, setFormData] = useState({ agentCode: "", password: "" })
   const navigate = useNavigate()
 

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router"
-import { useAuthStore } from "../store/auth.store"
+import { useAuthStore } from "../store/auth.store.ts"
 import { useEffect } from "react"
 
 function Admin() {

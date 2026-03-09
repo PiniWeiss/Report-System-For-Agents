@@ -20,3 +20,17 @@ export const protectedRoute = async (req, res, next) => {
         res.status(500).json({ error: "Internal server error" });
     }
 }
+export const protectedRouteAdmin = async (req, res, next) => {
+    try {
+        protectedRoute(req, res, () => {
+            if (req?.user?.role !== "admin") {
+                return res.status(403).json({ error: "Unauthorized You Are not Admin" })
+            }
+        })
+        next()
+
+    } catch (error) {
+        console.log("Error in protectRouteAdmin middleware:", error.message);
+        res.status(500).json({ error: "Internal server error" });
+    }
+}
