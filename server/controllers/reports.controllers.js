@@ -1,4 +1,5 @@
 import Report from "../modules/report.model.js"
+import User from "../modules/user.module.js"
 
 export const createReport = async (req, res) => {
     try {
@@ -8,7 +9,7 @@ export const createReport = async (req, res) => {
 
         if (!category || !urgency || !message) return res.status(401).json({ error: "One Of The Fields IS Missing" })
         let imagePath = ""
-        if (image) { imagePath = req.file.destination + "/" + req.file.filename }
+        if (image) { imagePath = req.file.destination }
 
         const newReport = await new Report({
             userId: user._id,
@@ -28,4 +29,50 @@ export const createReport = async (req, res) => {
     }
 }
 
-// const getReports
+export const getReports = async (req, res) => {
+    try {
+        const filter = req.query
+        let reports;
+
+        if (filter.category) {
+            reports = await Report.find({ category: filter.category })
+        }
+        if (filter.urgency) {
+            reports = await Report.find({ urgency: filter.urgency })
+        }
+        if (filter.agentCode) {
+            const agent = await User.findOne({ agentCode: filter.agentCode })
+            reports = await Report.find({ userId: agent._id })
+        }
+        if (req.user.role === "agent") {
+            reports = reports.filter(r => {
+               return  r.userId.toString() === req.user._id.toString()
+            })
+            
+        }
+
+        res.status(200).json(reports)
+    } catch (error) {
+        console.log("Error on getReports controller")
+        res.status(500).json({ error: error.message })
+
+    }
+}
+export const getReportById = async (req, res) => {
+    try {
+        const { id } = req.params
+
+        const report = await Report.findById(id)
+
+        if (report.userId !== req.user._id && req.user.role !== "admin") {
+            return res.status(403).json({ error: "Unauthorized User" })
+        }
+
+        if (!report) return res.status(404).json({ error: "Report Not Found" })
+        res.status(200).json(report)
+    } catch (error) {
+        console.log("Error on getReportById controller")
+        res.status(500).json({ error: error.message })
+
+    }
+} 
