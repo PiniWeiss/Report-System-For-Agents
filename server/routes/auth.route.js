@@ -5,7 +5,7 @@ import { protectedRoute } from '../middlewares/protectedRoute.js'
 const router = express.Router()
 
 router.post("/login", login)
-router.get("/me", protectedRoute , getUser)
-router.get("/logout", protectedRoute , logout)
+router.get("/me", protectedRoute, getUser)
+router.get("/logout", protectedRoute, logout)
 
 export default router

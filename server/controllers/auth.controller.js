@@ -1,7 +1,7 @@
 import User from "../modules/user.module.js"
 import { generateTokenAndSendToCookie } from "../utils/generateToken.js"
 
-export const login = async(req, res) => {
+export const login = async (req, res) => {
     try {
         const { agentCode, password } = req.body
         if (!agentCode, !password) return res.status(400).send("agentCode or password missing")
@@ -21,16 +21,16 @@ export const login = async(req, res) => {
         res.status(500).json({ error: "Internal server error." })
     }
 }
-export const getUser = async(req, res) => {
+export const getUser = async (req, res) => {
     try {
         const user = req.user
-        
-        const userToGet = await User.findOne({_id: user._id})
+
+        const userToGet = await User.findOne({ _id: user._id })
         res.status(200).json(userToGet)
     } catch (error) {
         console.log("Error on getUser controller:", error.message)
         res.status(500).json({ error: "Internal server error." })
-        
+
     }
 }
 

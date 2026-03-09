@@ -28,7 +28,7 @@ const reportSchema = mongoose.Schema({
         type: String,
         required: true
     }
-}, { Timestamp: true })
+}, { timestamps: true })
 
 const Report = mongoose.model("Report", reportSchema)
 export default Report

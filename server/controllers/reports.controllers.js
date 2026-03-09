@@ -1,5 +1,7 @@
+import fs from "fs"
 import Report from "../modules/report.model.js"
 import User from "../modules/user.module.js"
+import csv from 'csv-parser'
 
 export const createReport = async (req, res) => {
     try {
@@ -46,9 +48,9 @@ export const getReports = async (req, res) => {
         }
         if (req.user.role === "agent") {
             reports = reports.filter(r => {
-               return  r.userId.toString() === req.user._id.toString()
+                return r.userId.toString() === req.user._id.toString()
             })
-            
+
         }
 
         res.status(200).json(reports)
@@ -75,4 +77,38 @@ export const getReportById = async (req, res) => {
         res.status(500).json({ error: error.message })
 
     }
-} 
+}
+
+export const createReportsByCsv = (req, res) => {
+    try {
+        const results = []
+
+        if (!req.file) {
+            return res.status(400).json({ error: "CSV file not uploaded" })
+        }
+
+        fs.createReadStream(req.file.path)
+            .pipe(csv())
+            .on("data", (data) => results.push({
+                ...data,
+                userId: req.user._id,
+                sourceType: "csv"
+            }))
+            .on("end", async () => {
+                try {
+                    await Report.insertMany(results)
+                    if (req.file && req.file.path) { fs.unlinkSync(req.file.path) }
+                    res.status(200).json({
+                        message: "success",
+                        number_of_reports: results.length
+                    })
+                } catch (dbError) {
+                    res.status(500).json({ error: dbError.message })
+                }
+            })
+    } catch (error) {
+        console.log("Error on createReportsByCsv controller")
+        res.status(500).json({ error: error.message })
+
+    }
+}
