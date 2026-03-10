@@ -1,32 +1,30 @@
 import { useNavigate } from "react-router"
 import { useAuthStore } from "../store/auth.store"
-import { useState } from "react"
+import React, { useState } from "react"
 
 function Login() {
-  const { user , isLoading, login, success } = useAuthStore()
+  const { isLoading, login } = useAuthStore()
   const [formData, setFormData] = useState({ agentCode: "", password: "" })
   const navigate = useNavigate()
 
-  const handelChange = e => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
-  const handelSubmit = async (event) => {
+  const handleSubmit = async (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault()
-    await login(formData.agentCode, formData.password)
-    if (success) {
-      user.role === "admin" ? navigate("/admin") : navigate("/user")
-
-    }
+    const userData = await login(formData.agentCode, formData.password)
+    if(userData?.role === "admin")navigate("/admin")
+    if(userData?.role === "agent")navigate("/user")
   }
   return (
     <div>
       <div className='login-area'>
-        <form className='login-form' onSubmit={handelSubmit}>
+        <form className='login-form' onSubmit={handleSubmit}>
           <label>Agentcode</label>
-          <input onChange={handelChange} name="agentCode" className='agentcode-input' type="text" placeholder='Enter your agent code here:' />
+          <input onChange={handleChange} name="agentCode" className='agentcode-input' type="text" placeholder='Enter your agent code here:' />
           <label >Password</label>
-          <input onChange={handelChange} name="password" className='password-input' type="text" placeholder='Enter your password here:' />
+          <input onChange={handleChange} name="password" className='password-input' type="text" placeholder='Enter your password here:' />
           <button >{isLoading ? "Connecting.." : "submit"}</button>
         </form>
       </div>

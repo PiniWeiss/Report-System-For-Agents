@@ -6,29 +6,27 @@ import type { Agent } from '../types/agent';
 interface AuthState {
     user: Agent | null;
     isLoading: boolean;
-    isAuthonticated: boolean;
+    isLoggedIn: boolean;
     error: Error | null;
-    success: boolean;
     login: Function;
 }
 
 export const useAuthStore = create<AuthState>()(
     persist(
         (set) => ({
-            user:  null,
+            user: null,
             isLoading: false,
-            isAuthonticated: false,
+            isLoggedIn: false,
             error: null,
-            success: false,
 
             login: async (agentCode: string, password: string) => {
                 set({ isLoading: true, error: null });
                 try {
                     const userData: Agent = await loginReqest(agentCode, password)
-                    set({ user: userData, isLoading: false, success: true })
-
+                    set({ user: userData, isLoggedIn: true, isLoading: false })
+                    return userData
                 } catch (error: any) {
-                    set({ error: error, isLoading: false, success: false })
+                    set({ error: error, isLoading: false })
 
                 }
             }
