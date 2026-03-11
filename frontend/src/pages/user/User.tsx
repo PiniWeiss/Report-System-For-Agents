@@ -1,13 +1,7 @@
-import { Link, useNavigate } from "react-router"
-import { useAuthStore } from "../../store/auth.store.ts"
-import { useEffect } from "react"
+import { Link } from "react-router"
 
 function User() {
-  const { user } = useAuthStore()
-  const navigate = useNavigate()
-  useEffect(() => {
-    if (!user) navigate("/login")
-  }, [user])
+
   return (
     <div>
       Agent page

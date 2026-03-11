@@ -34,23 +34,22 @@ export const createReport = async (req, res) => {
 export const getReports = async (req, res) => {
     try {
         const filter = req.query
-        let reports;
-
+        let reports = await Report.find();
         if (filter.category) {
-            reports = await Report.find({ category: filter.category })
+            reports = reports.filter(r => r.category === filter.category)
         }
         if (filter.urgency) {
-            reports = await Report.find({ urgency: filter.urgency })
+            reports = reports.filter(r => r.urgency === filter.urgency)
         }
         if (filter.agentCode) {
             const agent = await User.findOne({ agentCode: filter.agentCode })
-            reports = await Report.find({ userId: agent._id })
+            reports = reports.filter(r => r.userId.toString() === agent._id.toString())
         }
+
         if (req.user.role === "agent") {
             reports = reports.filter(r => {
                 return r.userId.toString() === req.user._id.toString()
             })
-
         }
 
         res.status(200).json(reports)
