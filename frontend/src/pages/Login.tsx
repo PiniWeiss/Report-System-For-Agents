@@ -1,21 +1,25 @@
 import { useNavigate } from "react-router"
 import { useAuthStore } from "../store/auth.store"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 
 function Login() {
-  const { isLoading, login } = useAuthStore()
+  const { user, isLoading, isLoggedIn, login } = useAuthStore()
   const [formData, setFormData] = useState({ agentCode: "", password: "" })
   const navigate = useNavigate()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
   }
-
+  useEffect(() => {
+    if (isLoggedIn) {
+      user?.role === "admin" ? navigate("admin") : navigate("user")
+    }
+  },[])
   const handleSubmit = async (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault()
     const userData = await login(formData.agentCode, formData.password)
-    if(userData?.role === "admin")navigate("/admin")
-    if(userData?.role === "agent")navigate("/user")
+    if (userData?.role === "admin") navigate("/admin")
+    if (userData?.role === "agent") navigate("/user")
   }
   return (
     <div>

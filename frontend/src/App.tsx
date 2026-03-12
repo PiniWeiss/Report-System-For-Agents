@@ -11,22 +11,12 @@ import SendCsv from './pages/reportsPages/SendCsv'
 import PrivetComponent from './components/PrivetComponent'
 
 function App() {
-  const navigate = useNavigate()
   
-  const logout = async () => {
-    const res = await fetch("http://localhost:5000/api/auth/logout",{
-      credentials:"include"
-    })
-    if (res.ok) { localStorage.setItem("user-storage", "")
-      navigate("/login")
-     }
-    
-  }
   return (
     <>
-      <button onClick={logout}>Logout</button>
+      
       <Routes>
-        <Route path="/login" element={<Login />} />
+        <Route path="*" element={<Login />} />
         <Route path="/admin" element={<PrivetComponent role='admin' ><Admin /></PrivetComponent >} />
         <Route path="/reports" element={<PrivetComponent  ><WatchReports /></PrivetComponent>} />
         <Route path="/admin/mennageagents" element={<PrivetComponent role='admin'><MennageAgents /></PrivetComponent>} />
